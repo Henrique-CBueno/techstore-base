@@ -313,6 +313,34 @@ h2 {
   cursor: pointer;
 }
 
+.feedback-carrinho {
+  position: fixed;
+  right: var(--espaco-4);
+  bottom: var(--espaco-4);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-2);
+  max-width: min(360px, calc(100vw - 2rem));
+  padding: var(--espaco-3) var(--espaco-4);
+  background: var(--cor-frete);
+  color: #fff;
+  border-radius: var(--raio);
+  box-shadow: 0 8px 24px rgb(21 23 28 / 18%);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.feedback-carrinho span {
+  display: grid;
+  width: 1.25rem;
+  height: 1.25rem;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 70%);
+  border-radius: 50%;
+  font-size: 0.8rem;
+}
+
 /* Vitrine */
 
 .vitrine-topo h1 {

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Routes, Route } from 'react-router'
 import Header from './components/Header'
 import Footer from './components/Footer'
+import FeedbackCarrinho from './components/FeedbackCarrinho'
 import ModalErro from './components/ModalErro'
 import RolarParaTopo from './components/RolarParaTopo'
 import Loja from './pages/Loja'
@@ -23,6 +24,7 @@ export default function App() {
   const [erroClientes, setErroClientes] = useState(null)
   const [interessesReposicao, setInteressesReposicao] = useState([])
   const [mensagemErro, setMensagemErro] = useState('')
+  const [mensagemCarrinho, setMensagemCarrinho] = useState('')
 
   useEffect(() => {
     buscarProdutos()
@@ -46,6 +48,7 @@ export default function App() {
       return
     }
     setCarrinho((atual) => atual.concat(produto))
+    setMensagemCarrinho('Produto adicionado ao carrinho.')
   }
 
   function solicitarAvisoReposicao(produtoId) {
@@ -82,6 +85,7 @@ export default function App() {
       <RolarParaTopo />
       <Header clienteAtual={clienteAtual} quantidadeCarrinho={carrinho.length} />
       <ModalErro mensagem={mensagemErro} onFechar={() => setMensagemErro('')} />
+      <FeedbackCarrinho mensagem={mensagemCarrinho} onFechar={() => setMensagemCarrinho('')} />
 
       <main className="conteudo">
         {carregando && <p className="aviso">Carregando produtos...</p>}

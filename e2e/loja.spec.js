@@ -85,6 +85,7 @@ test('filtra a vitrine e não exibe produtos sem estoque ou sem preço', async (
 test('adiciona produto, aplica cupom de primeira compra e remove uma unidade', async ({ page }) => {
   await page.goto('/')
   await page.getByRole('article').filter({ hasText: 'Camiseta Básica' }).getByRole('button', { name: 'Adicionar ao carrinho' }).click()
+  await expect(page.getByRole('status')).toContainText('Produto adicionado ao carrinho.')
   await expect(page.getByText('1 item')).toBeVisible()
   await page.getByRole('link', { name: 'Carrinho' }).click()
 
