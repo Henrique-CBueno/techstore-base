@@ -5,7 +5,7 @@
 
 ## Resultado da validação
 
-- `npm test`: 3 arquivos e 7 testes aprovados.
+- `npm test`: 3 arquivos e 9 testes aprovados.
 - `npm run build`: concluído com sucesso.
 
 Os testes atuais não cobrem os fluxos de página, adição pelo detalhe do produto, sugestões do carrinho, tratamento de falha da API ou controle de estoque. Portanto, os achados abaixo foram confirmados por leitura dos fluxos e não significam que todos estejam cobertos por testes automatizados.
@@ -13,6 +13,8 @@ Os testes atuais não cobrem os fluxos de página, adição pelo detalhe do prod
 ## Achados prioritários
 
 ### 1. Adição ao carrinho não valida preço nem estoque
+
+**Status:** resolvido em `cf1751b` e `HEAD`.
 
 - **Severidade:** alta
 - **Arquivos:** `src/App.jsx:33-42`, `src/pages/PaginaProduto.jsx:49-53`, `src/pages/PaginaProduto.jsx:61-74`, `src/components/SugestaoItem.jsx:13`
@@ -22,6 +24,8 @@ Os testes atuais não cobrem os fluxos de página, adição pelo detalhe do prod
 
 ### 2. Produtos sem preço são filtrados da soma, mas continuam vendáveis em outros fluxos
 
+**Status:** resolvido em `cf1751b`.
+
 - **Severidade:** alta
 - **Arquivos:** `src/utils/produtos.js:1-5`, `src/pages/Loja.jsx:18-24`, `src/pages/PaginaProduto.jsx:17-22`, `src/pages/Carrinho.jsx:14-18`
 - **Problema:** `listarProdutosDisponiveis` verifica somente `estoque > 0`. A regra do enunciado diz que produtos sem preço não podem ser vendidos. A página de produto ainda mostra esses itens e permite adicioná-los; depois `calcularTotal` trata o preço inválido como zero.
@@ -29,6 +33,8 @@ Os testes atuais não cobrem os fluxos de página, adição pelo detalhe do prod
 - **Melhoria:** considerar preço válido na função de disponibilidade e bloquear a adição no nível comum do estado do carrinho. O fallback textual `"Preço indisponível"` deve ser apenas apresentação, não autorização de venda.
 
 ### 3. O card de produto está duplicado e inconsistente
+
+**Status:** resolvido em `cf1751b`.
 
 - **Severidade:** média
 - **Arquivos:** `src/components/ProdutoCard.jsx:1-42`, `src/pages/PaginaProduto.jsx:60-76`
@@ -38,6 +44,8 @@ Os testes atuais não cobrem os fluxos de página, adição pelo detalhe do prod
 
 ### 4. As sugestões do carrinho podem oferecer produtos indisponíveis
 
+**Status:** resolvido em `cf1751b`.
+
 - **Severidade:** média
 - **Arquivos:** `src/pages/Carrinho.jsx:16-18`, `src/components/SugestaoItem.jsx:3-14`
 - **Problema:** as sugestões são escolhidas diretamente de `produtos`; o filtro remove somente itens já presentes no carrinho. Não há filtro de estoque/preço e o botão nunca é desabilitado.
@@ -46,6 +54,8 @@ Os testes atuais não cobrem os fluxos de página, adição pelo detalhe do prod
 
 ### 5. Atualização do carrinho usa estado fechado pelo render
 
+**Status:** resolvido em `cf1751b`.
+
 - **Severidade:** média
 - **Arquivo:** `src/App.jsx:33-42`
 - **Problema:** `setCarrinho(carrinho.concat(produto))` e o `filter` de remoção usam o valor de `carrinho` capturado pelo render atual.
@@ -53,6 +63,8 @@ Os testes atuais não cobrem os fluxos de página, adição pelo detalhe do prod
 - **Melhoria:** usar a forma funcional de `setCarrinho`, por exemplo `setCarrinho((atual) => atual.concat(produto))`, tanto para adicionar quanto para remover.
 
 ### 6. Falha ao carregar clientes não tem tratamento
+
+**Status:** resolvido em `cf1751b`.
 
 - **Severidade:** baixa
 - **Arquivo:** `src/App.jsx:26-31`
@@ -64,17 +76,25 @@ Os testes atuais não cobrem os fluxos de página, adição pelo detalhe do prod
 
 ### 7. Regra de produto vendável deve ser compartilhada
 
+**Status:** resolvido em `cf1751b`.
+
 `listarProdutosDisponiveis` já é um ponto de reutilização, mas atualmente cobre somente estoque e é usado apenas em `Loja`. Ela deveria concentrar as condições que autorizam venda e ser usada pela vitrine, detalhe, relacionados, sugestões e pela função que adiciona ao carrinho. Isso evita que cada tela implemente uma variação da mesma regra.
 
 ### 8. Formatação de preço pode ser usada também no selo de frete
+
+**Status:** resolvido em `cf1751b`; o preço do item no carrinho também usa `formatarPreco`.
 
 Em `src/components/ProdutoCard.jsx:38`, o valor restante é montado manualmente com `toFixed(2).replace('.', ',')`. O projeto já possui `formatarPreco` em `src/utils/formatarPreco.js`. Reutilizá-la reduz formatação duplicada e mantém o padrão de moeda em um único lugar.
 
 ### 9. `produtosVisiveis` é estado derivado desnecessário
 
+**Status:** resolvido em `cf1751b`.
+
 Em `src/pages/Loja.jsx:15-25`, `produtosVisiveis` depende apenas de `produtos` e `categoria`, mas é mantido com `useState` e atualizado em `useEffect`. Isso causa uma renderização intermediária e adiciona sincronização que pode ser evitada. O valor pode ser calculado diretamente durante a renderização ou com `useMemo` se houver necessidade real de memoização.
 
 ### 10. Prop não utilizada
+
+**Status:** resolvido em `cf1751b`.
 
 `App` envia `carrinho={carrinho}` para `Header` em `src/App.jsx:56`, mas `Header` recebe somente `clienteAtual` e não usa o carrinho em `src/components/Header.jsx:3`. A prop pode ser removida; se a intenção era exibir a quantidade no cabeçalho, falta implementar esse comportamento.
 
@@ -82,12 +102,28 @@ Em `src/pages/Loja.jsx:15-25`, `produtosVisiveis` depende apenas de `produtos` e
 
 ### 11. Regra de frete está desatualizada
 
+**Status:** resolvido em `04f2009`.
+
 - `docs/regras-de-negocio.md:7` diz que o frete grátis vale para preço **acima de R$ 100**.
 - `src/components/ProdutoCard.jsx:7-8,31-34` e `tests/ProdutoCard.test.jsx:7-25` usam o limite de **R$ 200**.
 
 O enunciado indica que a regra atual é baseada no valor final acima de R$ 200. A documentação deve ser corrigida para não orientar futuras alterações com um limite incorreto.
 
 ### 12. Regra do cupom está contraditória
+
+**Status:** resolvido em `04f2009`.
+
+### 13. Quantidade do carrinho podia ultrapassar o estoque
+
+- **Status:** resolvido em `HEAD`.
+- **Arquivos:** `src/utils/carrinho.js`, `src/App.jsx`
+- A inclusão agora conta as unidades já presentes usando o estado mais recente e bloqueia novas inclusões quando o limite é atingido.
+
+### 14. Não havia fluxo de aviso de reposição
+
+- **Status:** resolvido em `HEAD`.
+- **Arquivos:** `src/App.jsx`, `src/pages/PaginaProduto.jsx`, `src/pages/Estoque.jsx`
+- Clientes selecionados no ambiente de testes podem solicitar aviso para produtos indisponíveis. A área interna lista os interessados, com nome e e-mail, por produto.
 
 - `docs/regras-de-negocio.md:10-11` diz que `PRIMEIRACOMPRA` pode ser usado por qualquer cliente.
 - `src/utils/cupons.js:13-15` rejeita clientes com pedidos anteriores.
@@ -111,6 +147,10 @@ Adicionar testes pequenos e direcionados para:
 3. Trocar as atualizações do carrinho para a forma funcional.
 4. Corrigir a documentação e adicionar testes dos fluxos de página.
 5. Remover a prop não utilizada e simplificar o estado derivado da loja.
+6. Limitar a quantidade no carrinho ao estoque disponível.
+7. Implementar o aviso de reposição e a listagem de interessados.
+
+As etapas acima estão implementadas. Resta apenas validação manual no navegador, porque a suíte atual não cobre interação completa entre rotas.
 
 ## Plano de execução e ordem dos commits
 
