@@ -5,7 +5,7 @@
 
 ## Resultado da validação
 
-- `npm test`: 3 arquivos e 9 testes aprovados.
+- `npm test`: 4 arquivos e 15 testes aprovados.
 - `npm run build`: concluído com sucesso.
 
 Os testes atuais não cobrem os fluxos de página, adição pelo detalhe do produto, sugestões do carrinho, tratamento de falha da API ou controle de estoque. Portanto, os achados abaixo foram confirmados por leitura dos fluxos e não significam que todos estejam cobertos por testes automatizados.
@@ -45,6 +45,8 @@ Os testes atuais não cobrem os fluxos de página, adição pelo detalhe do prod
 ### 4. As sugestões do carrinho podem oferecer produtos indisponíveis
 
 **Status:** resolvido em `cf1751b`.
+
+`SugestaoItem` agora delega a renderização para `ProdutoCard` usando a variante compacta, mantendo somente o layout resumido como diferença intencional.
 
 - **Severidade:** média
 - **Arquivos:** `src/pages/Carrinho.jsx:16-18`, `src/components/SugestaoItem.jsx:3-14`
@@ -125,6 +127,22 @@ O enunciado indica que a regra atual é baseada no valor final acima de R$ 200. 
 - **Arquivos:** `src/App.jsx`, `src/pages/PaginaProduto.jsx`, `src/pages/Estoque.jsx`
 - Clientes selecionados no ambiente de testes podem solicitar aviso para produtos indisponíveis. A área interna lista os interessados, com nome e e-mail, por produto.
 
+### 15. Validação de preço repetida
+
+- **Status:** resolvido nesta rodada.
+- `obterPrecoNumerico` em `src/utils/produtos.js` centraliza a conversão e validação de preços positivos e finitos.
+
+### 16. URL da API não era validada
+
+- **Status:** resolvido nesta rodada.
+- `src/services/api.js` agora rejeita configuração ausente ou vazia com erro explícito.
+
+### 17. Cobertura insuficiente dos fluxos corrigidos
+
+- **Status:** melhorado nesta rodada.
+- A suíte passou a cobrir a validação da URL/API, a variante compacta do card, a indisponibilidade e o limite de estoque.
+- A cobertura ainda é unitária e de componente; não substitui uma validação manual ou E2E completa de todas as rotas.
+
 - `docs/regras-de-negocio.md:10-11` diz que `PRIMEIRACOMPRA` pode ser usado por qualquer cliente.
 - `src/utils/cupons.js:13-15` rejeita clientes com pedidos anteriores.
 
@@ -200,5 +218,5 @@ Antes de cada commit, executar `npm test` e `npm run build`. Cada commit deve re
 
 ### Estado inicial verificado
 
-- `npm test`: 3 arquivos, 7 testes aprovados.
+- `npm test`: 4 arquivos, 15 testes aprovados.
 - `npm run build`: concluído com sucesso.
