@@ -3,7 +3,13 @@ import ProdutoCard from '../components/ProdutoCard'
 import { formatarPreco } from '../utils/formatarPreco'
 import { listarProdutosDisponiveis, produtoVendavel } from '../utils/produtos'
 
-export default function PaginaProduto({ produtos, onAdicionar }) {
+export default function PaginaProduto({
+  produtos,
+  clienteAtual,
+  onAdicionar,
+  onSolicitarAviso,
+  interessesReposicao = [],
+}) {
   const { id } = useParams()
   const produto = produtos.find((item) => item.id === id)
 
@@ -20,6 +26,10 @@ export default function PaginaProduto({ produtos, onAdicionar }) {
 
   const precoNumerico = Number(produto.price)
   const precoValido = Number.isFinite(precoNumerico) && precoNumerico > 0
+  const disponivel = produto.estoque > 0 && precoValido
+  const jaSolicitouAviso = interessesReposicao.some(
+    (item) => item.produtoId === produto.id && item.clienteId === clienteAtual?.id
+  )
   const relacionados = listarProdutosDisponiveis(produtos)
     .filter((item) => item.category === produto.category && item.id !== produto.id)
     .slice(0, 4)
@@ -53,6 +63,15 @@ export default function PaginaProduto({ produtos, onAdicionar }) {
           >
             Adicionar ao carrinho
           </button>
+          {!disponivel && (
+            <button
+              className="botao botao-secundario"
+              onClick={() => onSolicitarAviso(produto.id)}
+              disabled={!clienteAtual || jaSolicitouAviso}
+            >
+              {jaSolicitouAviso ? 'Aviso solicitado' : 'Avise-me quando voltar'}
+            </button>
+          )}
 
           <ul className="detalhe-garantias">
             <li>Troca grátis em até 30 dias</li>

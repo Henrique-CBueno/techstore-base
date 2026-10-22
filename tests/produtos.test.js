@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { calcularTotal } from '../src/utils/carrinho'
+import { calcularTotal, podeAdicionarProduto } from '../src/utils/carrinho'
 import { formatarPreco } from '../src/utils/formatarPreco'
 import { listarProdutosDisponiveis, produtoVendavel } from '../src/utils/produtos'
 
@@ -14,6 +14,15 @@ describe('calcularTotal', () => {
         ]
 
         expect(calcularTotal(carrinho)).toBe(135.4)
+    })
+
+    describe('podeAdicionarProduto', () => {
+        it('impede ultrapassar o estoque disponível', () => {
+            const produto = { id: '1', estoque: 2, price: 10 }
+            expect(podeAdicionarProduto([], produto)).toBe(true)
+            expect(podeAdicionarProduto([produto], produto)).toBe(true)
+            expect(podeAdicionarProduto([produto, produto], produto)).toBe(false)
+        })
     })
 })
 

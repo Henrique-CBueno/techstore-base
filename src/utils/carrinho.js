@@ -8,6 +8,12 @@ export function calcularTotal(carrinho) {
   }, 0)
 }
 
+export function podeAdicionarProduto(carrinho, produto) {
+  const estoque = Number(produto?.estoque)
+  const quantidade = carrinho.filter((item) => item.id === produto?.id).length
+  return Number.isFinite(estoque) && quantidade < estoque
+}
+
 export function agruparItens(carrinho) {
   const itens = []
   carrinho.forEach((produto) => {
