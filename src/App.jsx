@@ -9,6 +9,7 @@ import Carrinho from './pages/Carrinho'
 import Estoque from './pages/Estoque'
 import { buscarProdutos } from './services/produtos'
 import { buscarClientes } from './services/clientes'
+import { produtoVendavel } from './utils/produtos'
 
 export default function App() {
   const [produtos, setProdutos] = useState([])
@@ -17,6 +18,7 @@ export default function App() {
   const [carrinho, setCarrinho] = useState([])
   const [clientes, setClientes] = useState([])
   const [clienteAtualId, setClienteAtualId] = useState(null)
+  const [erroClientes, setErroClientes] = useState(null)
 
   useEffect(() => {
     buscarProdutos()
@@ -27,18 +29,19 @@ export default function App() {
     buscarClientes().then((dados) => {
       setClientes(dados)
       if (dados.length > 0) setClienteAtualId(dados[0].id)
-    })
+    }).catch(() => setErroClientes('Não foi possível carregar os clientes de teste.'))
   }, [])
 
   function adicionarAoCarrinho(produto) {
-    setCarrinho(carrinho.concat(produto))
+    if (!produtoVendavel(produto)) return
+    setCarrinho((atual) => atual.concat(produto))
   }
 
   function removerUmaUnidade(produtoId) {
     // Remove só a primeira unidade encontrada do produto
     let removido = false
-    setCarrinho(
-      carrinho.filter((produto) => {
+    setCarrinho((atual) =>
+      atual.filter((produto) => {
         if (!removido && produto.id === produtoId) {
           removido = true
           return false
@@ -53,11 +56,12 @@ export default function App() {
   return (
     <div className="app">
       <RolarParaTopo />
-      <Header carrinho={carrinho} clienteAtual={clienteAtual} />
+      <Header clienteAtual={clienteAtual} />
 
       <main className="conteudo">
         {carregando && <p className="aviso">Carregando produtos...</p>}
         {erro && <p className="aviso aviso-erro">{erro}</p>}
+        {erroClientes && <p className="aviso aviso-erro">{erroClientes}</p>}
 
         {!carregando && !erro && (
           <Routes>

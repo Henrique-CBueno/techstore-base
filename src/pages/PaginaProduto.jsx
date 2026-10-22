@@ -1,5 +1,7 @@
 import { Link, useParams } from 'react-router'
+import ProdutoCard from '../components/ProdutoCard'
 import { formatarPreco } from '../utils/formatarPreco'
+import { listarProdutosDisponiveis, produtoVendavel } from '../utils/produtos'
 
 export default function PaginaProduto({ produtos, onAdicionar }) {
   const { id } = useParams()
@@ -18,7 +20,7 @@ export default function PaginaProduto({ produtos, onAdicionar }) {
 
   const precoNumerico = Number(produto.price)
   const precoValido = Number.isFinite(precoNumerico) && precoNumerico > 0
-  const relacionados = produtos
+  const relacionados = listarProdutosDisponiveis(produtos)
     .filter((item) => item.category === produto.category && item.id !== produto.id)
     .slice(0, 4)
 
@@ -47,7 +49,7 @@ export default function PaginaProduto({ produtos, onAdicionar }) {
           <button
             className="botao botao-grande"
             onClick={() => onAdicionar(produto)}
-            disabled={produto.estoque === 0}
+            disabled={!produtoVendavel(produto)}
           >
             Adicionar ao carrinho
           </button>
@@ -62,18 +64,7 @@ export default function PaginaProduto({ produtos, onAdicionar }) {
       <h2>Produtos relacionados</h2>
       <div className="grade">
         {relacionados.map((item) => (
-          <article key={item.id} className="card">
-            <Link to={`/produto/${item.id}`} className="card-link">
-              <div className="card-imagem-moldura">
-                <img src={item.image} alt={item.title} className="card-imagem" />
-              </div>
-              <h3 className="card-titulo">{item.title}</h3>
-            </Link>
-            <p className="preco">{formatarPreco(item.price)}</p>
-            <button className="botao" onClick={() => onAdicionar(item)}>
-              Adicionar ao carrinho
-            </button>
-          </article>
+          <ProdutoCard key={item.id} produto={item} onAdicionar={onAdicionar} />
         ))}
       </div>
     </section>
