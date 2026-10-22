@@ -1,6 +1,7 @@
 node_modules
 dist
 test-results
+.playwright-cli
 .DS_Store
 .ponytail-skill
 skills/

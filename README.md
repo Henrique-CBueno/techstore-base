@@ -38,6 +38,12 @@ npm run test:e2e
 
 A suíte E2E inicia o Vite automaticamente e usa fixtures interceptadas para testar os principais fluxos sem depender da API externa.
 
+Para automação por agentes, consulte o [Playwright CLI](https://playwright.dev/agent-cli/introduction) e instale-o globalmente:
+
+```bash
+npm install -g @playwright/cli
+```
+
 ## Organização do projeto
 
 | Pasta | Conteúdo |
