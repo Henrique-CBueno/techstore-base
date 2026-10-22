@@ -85,6 +85,7 @@ test('filtra a vitrine e não exibe produtos sem estoque ou sem preço', async (
 test('adiciona produto, aplica cupom de primeira compra e remove uma unidade', async ({ page }) => {
   await page.goto('/')
   await page.getByRole('article').filter({ hasText: 'Camiseta Básica' }).getByRole('button', { name: 'Adicionar ao carrinho' }).click()
+  await expect(page.getByText('1 item')).toBeVisible()
   await page.getByRole('link', { name: 'Carrinho' }).click()
 
   await expect(page.locator('.item-preco')).toHaveText('R$ 150,00')
@@ -105,6 +106,7 @@ test('não ultrapassa o estoque mesmo com cliques repetidos', async ({ page }) =
   await adicionar.click()
   await adicionar.click()
   await adicionar.click()
+  await page.getByRole('button', { name: 'Entendi' }).click()
   await page.getByRole('link', { name: 'Carrinho' }).click()
 
   await expect(page.getByText('2 un.')).toBeVisible()
@@ -115,7 +117,9 @@ test('permite pedir reposição por link direto e mostra o interessado no estoqu
   await page.goto('/produto/fone-esgotado')
 
   await expect(page.getByRole('heading', { name: 'Fone Esgotado' })).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Adicionar ao carrinho' }).first()).toBeDisabled()
+  await page.getByRole('button', { name: 'Produto indisponível' }).click()
+  await expect(page.getByRole('alertdialog')).toContainText('produto está indisponível')
+  await page.getByRole('button', { name: 'Entendi' }).click()
   const aviso = page.getByRole('button', { name: 'Avise-me quando voltar' })
   await aviso.click()
   await expect(page.getByRole('button', { name: 'Aviso solicitado' })).toBeDisabled()
@@ -124,6 +128,21 @@ test('permite pedir reposição por link direto e mostra o interessado no estoqu
   const linha = page.getByRole('row').filter({ hasText: 'Fone Esgotado' })
   await expect(linha).toContainText('Ana Souza')
   await expect(linha).toContainText('ana@example.com')
+})
+
+test('informa quando a quantidade máxima do estoque já foi atingida', async ({ page }) => {
+  await page.goto('/')
+  const card = page.getByRole('article').filter({ hasText: 'Camiseta Básica' })
+  const adicionar = card.getByRole('button', { name: 'Adicionar ao carrinho' })
+
+  await adicionar.click()
+  await adicionar.click()
+  await adicionar.click()
+
+  await expect(page.getByRole('alertdialog')).toContainText('limite de 2 unidade(s)')
+  await expect(page.getByRole('button', { name: 'Entendi' })).toBeVisible()
+  await page.getByRole('button', { name: 'Entendi' }).click()
+  await expect(page.getByText('2 itens')).toBeVisible()
 })
 
 test('não aceita cupom de primeira compra para cliente que já comprou', async ({ page }) => {

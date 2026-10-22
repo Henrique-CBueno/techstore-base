@@ -258,6 +258,61 @@ h2 {
   color: var(--cor-texto-suave);
 }
 
+.modal-fundo {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: var(--espaco-4);
+  background: rgb(21 23 28 / 55%);
+}
+
+.modal-erro {
+  position: relative;
+  width: min(100%, 420px);
+  padding: var(--espaco-6);
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+  box-shadow: 0 16px 48px rgb(21 23 28 / 20%);
+  text-align: center;
+}
+
+.modal-erro h2 {
+  margin: 0 0 var(--espaco-3);
+}
+
+.modal-erro p:not(.modal-icone) {
+  margin: 0 0 var(--espaco-5);
+  color: var(--cor-texto-suave);
+}
+
+.modal-icone {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  margin: 0 auto var(--espaco-3);
+  place-items: center;
+  border-radius: 50%;
+  background: var(--cor-erro-fundo);
+  color: var(--cor-erro);
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.modal-fechar {
+  position: absolute;
+  top: var(--espaco-3);
+  right: var(--espaco-3);
+  border: 0;
+  background: transparent;
+  color: var(--cor-texto-suave);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
 /* Vitrine */
 
 .vitrine-topo h1 {

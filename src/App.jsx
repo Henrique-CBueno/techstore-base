@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Routes, Route } from 'react-router'
 import Header from './components/Header'
 import Footer from './components/Footer'
+import ModalErro from './components/ModalErro'
 import RolarParaTopo from './components/RolarParaTopo'
 import Loja from './pages/Loja'
 import PaginaProduto from './pages/PaginaProduto'
@@ -21,6 +22,7 @@ export default function App() {
   const [clienteAtualId, setClienteAtualId] = useState(null)
   const [erroClientes, setErroClientes] = useState(null)
   const [interessesReposicao, setInteressesReposicao] = useState([])
+  const [mensagemErro, setMensagemErro] = useState('')
 
   useEffect(() => {
     buscarProdutos()
@@ -35,12 +37,22 @@ export default function App() {
   }, [])
 
   function adicionarAoCarrinho(produto) {
-    if (!produtoVendavel(produto)) return
-    setCarrinho((atual) => (podeAdicionarProduto(atual, produto) ? atual.concat(produto) : atual))
+    if (!produtoVendavel(produto)) {
+      setMensagemErro('Este produto está indisponível para venda no momento.')
+      return
+    }
+    if (!podeAdicionarProduto(carrinho, produto)) {
+      setMensagemErro(`Você já atingiu o limite de ${produto.estoque} unidade(s) deste produto.`)
+      return
+    }
+    setCarrinho((atual) => atual.concat(produto))
   }
 
   function solicitarAvisoReposicao(produtoId) {
-    if (!clienteAtualId) return
+    if (!clienteAtualId) {
+      setMensagemErro('Selecione um cliente de teste antes de solicitar o aviso.')
+      return
+    }
     setInteressesReposicao((atuais) => {
       const jaSolicitou = atuais.some(
         (item) => item.produtoId === produtoId && item.clienteId === clienteAtualId
@@ -68,7 +80,8 @@ export default function App() {
   return (
     <div className="app">
       <RolarParaTopo />
-      <Header clienteAtual={clienteAtual} />
+      <Header clienteAtual={clienteAtual} quantidadeCarrinho={carrinho.length} />
+      <ModalErro mensagem={mensagemErro} onFechar={() => setMensagemErro('')} />
 
       <main className="conteudo">
         {carregando && <p className="aviso">Carregando produtos...</p>}

@@ -60,9 +60,8 @@ export default function PaginaProduto({
           <button
             className="botao botao-grande"
             onClick={() => onAdicionar(produto)}
-            disabled={!produtoVendavel(produto)}
           >
-            Adicionar ao carrinho
+            {disponivel ? 'Adicionar ao carrinho' : 'Produto indisponível'}
           </button>
           {!disponivel && (
             <button
