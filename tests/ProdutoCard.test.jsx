@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { describe, expect, it } from 'vitest'
-import ProdutoCard from './ProdutoCard'
+import ProdutoCard from '../src/components/ProdutoCard'
 
 describe('ProdutoCard', () => {
     it('mostra quanto falta para ganhar frete grátis quando o valor final ainda não alcança R$ 200', () => {

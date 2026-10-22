@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { calcularTotal } from './carrinho'
-import { listarProdutosDisponiveis } from './produtos'
+import { calcularTotal } from '../src/utils/carrinho'
+import { formatarPreco } from '../src/utils/formatarPreco'
+import { listarProdutosDisponiveis } from '../src/utils/produtos'
 
 describe('calcularTotal', () => {
     it('ignora preços ausentes e converte strings numéricas', () => {
@@ -26,5 +27,13 @@ describe('listarProdutosDisponiveis', () => {
         ]
 
         expect(listarProdutosDisponiveis(produtos).map((produto) => produto.id)).toEqual(['2', '4'])
+    })
+})
+
+describe('formatarPreco', () => {
+    it('retorna texto seguro para preços inválidos', () => {
+        expect(formatarPreco(undefined)).toBe('Preço indisponível')
+        expect(formatarPreco('NaN')).toBe('Preço indisponível')
+        expect(formatarPreco(129.9)).toBe('R$ 129,90')
     })
 })

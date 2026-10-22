@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { validarCupom } from './cupons'
+import { validarCupom } from '../src/utils/cupons'
 
 describe('validarCupom', () => {
     it('aceita PRIMEIRACOMPRA para cliente novo', () => {

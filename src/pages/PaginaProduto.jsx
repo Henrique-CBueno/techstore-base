@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router'
+import { formatarPreco } from '../utils/formatarPreco'
 
 export default function PaginaProduto({ produtos, onAdicionar }) {
   const { id } = useParams()
@@ -15,6 +16,8 @@ export default function PaginaProduto({ produtos, onAdicionar }) {
     )
   }
 
+  const precoNumerico = Number(produto.price)
+  const precoValido = Number.isFinite(precoNumerico) && precoNumerico > 0
   const relacionados = produtos
     .filter((item) => item.category === produto.category && item.id !== produto.id)
     .slice(0, 4)
@@ -37,7 +40,7 @@ export default function PaginaProduto({ produtos, onAdicionar }) {
           <p className="card-avaliacao">
             ★ {produto.rating.rate} <span>({produto.rating.count} avaliações)</span>
           </p>
-          <p className="detalhe-preco">R$ {produto.price.toFixed(2).replace('.', ',')}</p>
+          <p className="detalhe-preco">{precoValido ? formatarPreco(precoNumerico) : 'Preço indisponível'}</p>
           <p className="detalhe-descricao">{produto.description}</p>
           <p className="detalhe-estoque">{produto.estoque} unidades disponíveis</p>
 
@@ -66,7 +69,7 @@ export default function PaginaProduto({ produtos, onAdicionar }) {
               </div>
               <h3 className="card-titulo">{item.title}</h3>
             </Link>
-            <p className="preco">R$ {Number(item.price).toFixed(2).replace('.', ',')}</p>
+            <p className="preco">{formatarPreco(item.price)}</p>
             <button className="botao" onClick={() => onAdicionar(item)}>
               Adicionar ao carrinho
             </button>
