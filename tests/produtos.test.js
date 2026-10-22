@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { calcularTotal } from '../src/utils/carrinho'
 import { formatarPreco } from '../src/utils/formatarPreco'
-import { listarProdutosDisponiveis } from '../src/utils/produtos'
+import { listarProdutosDisponiveis, produtoVendavel } from '../src/utils/produtos'
 
 describe('calcularTotal', () => {
     it('ignora preços ausentes e converte strings numéricas', () => {
@@ -18,15 +18,26 @@ describe('calcularTotal', () => {
 })
 
 describe('listarProdutosDisponiveis', () => {
-    it('remove produtos esgotados e sem estoque', () => {
+    it('remove produtos esgotados, sem estoque e sem preço', () => {
         const produtos = [
-            { id: '1', estoque: 0, title: 'Esgotado' },
-            { id: '2', estoque: 2, title: 'Disponível' },
-            { id: '3', estoque: undefined, title: 'Sem estoque' },
-            { id: '4', estoque: 5, title: 'Disponível 2' },
+            { id: '1', estoque: 0, price: 10, title: 'Esgotado' },
+            { id: '2', estoque: 2, price: 10, title: 'Disponível' },
+            { id: '3', estoque: undefined, price: 10, title: 'Sem estoque' },
+            { id: '4', estoque: 5, price: undefined, title: 'Sem preço' },
+            { id: '5', estoque: 5, price: 0, title: 'Preço zerado' },
+            { id: '6', estoque: 5, price: 10, title: 'Disponível 2' },
         ]
 
-        expect(listarProdutosDisponiveis(produtos).map((produto) => produto.id)).toEqual(['2', '4'])
+        expect(listarProdutosDisponiveis(produtos).map((produto) => produto.id)).toEqual(['2', '6'])
+    })
+})
+
+describe('produtoVendavel', () => {
+    it('aceita somente produto com estoque e preço positivos', () => {
+        expect(produtoVendavel({ estoque: 1, price: 10 })).toBe(true)
+        expect(produtoVendavel({ estoque: 0, price: 10 })).toBe(false)
+        expect(produtoVendavel({ estoque: 1, price: undefined })).toBe(false)
+        expect(produtoVendavel({ estoque: 1, price: 'abc' })).toBe(false)
     })
 })
 
