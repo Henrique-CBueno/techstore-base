@@ -22,6 +22,22 @@ A loja abre em `http://localhost:5173`.
 
 O endereço da API fica na variável `VITE_API_URL`, no arquivo `.env`.
 
+## Testes
+
+Testes unitários:
+
+```bash
+npm test
+```
+
+Testes E2E com Playwright:
+
+```bash
+npm run test:e2e
+```
+
+A suíte E2E inicia o Vite automaticamente e usa fixtures interceptadas para testar os principais fluxos sem depender da API externa.
+
 ## Organização do projeto
 
 | Pasta | Conteúdo |
