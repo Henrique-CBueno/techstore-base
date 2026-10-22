@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router'
 import ProdutoCard from '../components/ProdutoCard'
 import { formatarPreco } from '../utils/formatarPreco'
-import { listarProdutosDisponiveis, produtoVendavel } from '../utils/produtos'
+import { listarProdutosDisponiveis, obterPrecoNumerico, produtoVendavel } from '../utils/produtos'
 
 export default function PaginaProduto({
   produtos,
@@ -24,9 +24,8 @@ export default function PaginaProduto({
     )
   }
 
-  const precoNumerico = Number(produto.price)
-  const precoValido = Number.isFinite(precoNumerico) && precoNumerico > 0
-  const disponivel = produto.estoque > 0 && precoValido
+  const precoNumerico = obterPrecoNumerico(produto.price)
+  const disponivel = produtoVendavel(produto)
   const jaSolicitouAviso = interessesReposicao.some(
     (item) => item.produtoId === produto.id && item.clienteId === clienteAtual?.id
   )
@@ -52,7 +51,9 @@ export default function PaginaProduto({
           <p className="card-avaliacao">
             ★ {produto.rating.rate} <span>({produto.rating.count} avaliações)</span>
           </p>
-          <p className="detalhe-preco">{precoValido ? formatarPreco(precoNumerico) : 'Preço indisponível'}</p>
+          <p className="detalhe-preco">
+            {precoNumerico === null ? 'Preço indisponível' : formatarPreco(precoNumerico)}
+          </p>
           <p className="detalhe-descricao">{produto.description}</p>
           <p className="detalhe-estoque">{produto.estoque} unidades disponíveis</p>
 

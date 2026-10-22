@@ -26,4 +26,26 @@ describe('ProdutoCard', () => {
 
         expect(screen.getByText(/Falta R\$ 50,00 para ganhar frete grátis/i)).toBeTruthy()
     })
+
+    it('reutiliza a variante compacta para sugestões e bloqueia item indisponível', () => {
+        render(
+            <MemoryRouter>
+                <ProdutoCard
+                    compacto
+                    produto={{
+                        id: '2',
+                        title: 'Produto esgotado',
+                        image: 'https://example.com/image.jpg',
+                        price: 50,
+                        estoque: 0,
+                        rating: { rate: 4, count: 1 },
+                    }}
+                    onAdicionar={() => { }}
+                />
+            </MemoryRouter>
+        )
+
+        expect(screen.getAllByRole('link', { name: 'Produto esgotado' })).toHaveLength(2)
+        expect(screen.getByRole('button', { name: 'Comprar' }).disabled).toBe(true)
+    })
 })

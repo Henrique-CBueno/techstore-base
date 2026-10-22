@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { calcularTotal, podeAdicionarProduto } from '../src/utils/carrinho'
 import { formatarPreco } from '../src/utils/formatarPreco'
-import { listarProdutosDisponiveis, produtoVendavel } from '../src/utils/produtos'
+import { listarProdutosDisponiveis, obterPrecoNumerico, produtoVendavel } from '../src/utils/produtos'
 
 describe('calcularTotal', () => {
     it('ignora preços ausentes e converte strings numéricas', () => {
@@ -47,6 +47,14 @@ describe('produtoVendavel', () => {
         expect(produtoVendavel({ estoque: 0, price: 10 })).toBe(false)
         expect(produtoVendavel({ estoque: 1, price: undefined })).toBe(false)
         expect(produtoVendavel({ estoque: 1, price: 'abc' })).toBe(false)
+    })
+
+    describe('obterPrecoNumerico', () => {
+        it('retorna somente preços positivos e finitos', () => {
+            expect(obterPrecoNumerico('12.5')).toBe(12.5)
+            expect(obterPrecoNumerico(0)).toBeNull()
+            expect(obterPrecoNumerico('abc')).toBeNull()
+        })
     })
 })
 
